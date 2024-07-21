@@ -3,17 +3,18 @@ import React, { useState, useEffect } from "react";
 interface WeatherComponentProps {
   latitude: string;
   longitude: string;
+  location: string;
 }
 
 const WeatherComponent: React.FC<WeatherComponentProps> = ({
   latitude,
   longitude,
+  location,
 }) => {
   const [weatherData, setWeatherData] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    console.log(latitude, longitude);
     const fetchWeatherData = async () => {
       try {
         const response = await fetch(
@@ -37,7 +38,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
     };
 
     fetchWeatherData();
-  }, [latitude, longitude]);
+  }, [latitude, longitude, location]);
 
   return (
     <div>

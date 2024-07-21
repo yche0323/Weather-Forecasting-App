@@ -10,12 +10,12 @@ interface CityOption {
     state: string;
     country: string;
     lat: number;
-    lon: number;
+    lng: number;
   };
 }
 
 interface SearchBarProps {
-  onCitySelect: (lat: string, lng: string) => void;
+  onCitySelect: (lat: string, lng: string, loc: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
@@ -50,7 +50,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
             feature.context.find((c: any) => c.id.includes("country"))?.text ||
             "", // Extract country
           lat: feature.center[1],
-          lon: feature.center[0],
+          lng: feature.center[0],
         },
       }));
       setOptions(cities);
@@ -88,8 +88,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
       );
       const feature = response.data.features[0];
       const { center } = feature;
-      const [lon, lat] = center;
-      onCitySelect(lat.toString(), lon.toString());
+      const [lng, lat] = center;
+      onCitySelect(lat.toString(), lng.toString(), `${city}, ${country}`);
     } catch (error) {
       console.error("Error fetching coordinates:", error);
     }
