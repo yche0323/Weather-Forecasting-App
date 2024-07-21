@@ -95,6 +95,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
 
   return (
     <Select
+      className="search-bar"
       options={options}
       onInputChange={(inputValue) => {
         fetchCities(inputValue)

@@ -1,0 +1,39 @@
+.homepage {
+    background-color: purple;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    width: 200px;
+    height: 200px;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-container .search-bar {
+    margin-right: 10px;
+    width: 400px;
+}
+
+.location-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 50%;
+    overflow: hidden;
+    padding-top: 37px;
+}
+
+.location-button img{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}

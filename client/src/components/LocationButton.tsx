@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import img from "../images/location-button.svg";
 
 interface LocationButtonProps {
   onCitySelect: (lat: string, lng: string, loc: string) => void;
@@ -75,7 +76,9 @@ const LocationButton: React.FC<LocationButtonProps> = ({ onCitySelect }) => {
 
   return (
     <div>
-      <button onClick={handleGetLocation}>Get Current Location</button>
+      <button className="location-button" onClick={handleGetLocation}>
+        <img src={img} alt="Current Location Button" />
+      </button>
     </div>
   );
 };
