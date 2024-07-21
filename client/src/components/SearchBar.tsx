@@ -20,7 +20,6 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
   const [options, setOptions] = useState<CityOption[]>([]);
-  const [selectedCity, setSelectedCity] = useState<CityOption | null>(null);
 
   const fetchCities = async (input: string) => {
     if (input.length < 2) return;
@@ -60,7 +59,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
   };
 
   const handleChange = (selectedOption: CityOption | null) => {
-    setSelectedCity(selectedOption);
     if (selectedOption) {
       const { city, state, country } = selectedOption.value;
       console.log(`Selected city: ${city}, ${state}, ${country}`);
