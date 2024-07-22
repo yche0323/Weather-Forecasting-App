@@ -8,9 +8,9 @@ import "../css/WeatherPage.css";
 
 interface WeatherPageProps {
   onCitySelect: (lat: string, lng: string, loc: string) => void;
-  latitude: string;
-  longitude: string;
-  location: string;
+  latitude: string | null;
+  longitude: string | null;
+  location: string | null;
 }
 
 const WeatherPage: React.FC<WeatherPageProps> = (props) => {
@@ -32,11 +32,21 @@ const WeatherPage: React.FC<WeatherPageProps> = (props) => {
         </div>
       </div>
       {props.latitude && props.longitude && props.location && (
-        <WeatherComponent
-          latitude={props.latitude}
-          longitude={props.longitude}
-          location={props.location}
-        />
+        <div>
+          <h1 className="location-header">
+            <span className="city">{props.location.split(",")[0]}</span>
+            <span className="country">
+              {", " + props.location.split(",")[1]}
+            </span>
+          </h1>
+          {props.latitude && props.longitude && props.location && (
+            <WeatherComponent
+              latitude={props.latitude}
+              longitude={props.longitude}
+              location={props.location}
+            />
+          )}
+        </div>
       )}
     </div>
   );

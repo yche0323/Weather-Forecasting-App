@@ -27,16 +27,12 @@ const App: React.FC = () => {
         <Route
           path="/weatherpage"
           element={
-            latitude &&
-            longitude &&
-            location && (
-              <WeatherPage
-                onCitySelect={handleCitySelect}
-                latitude={latitude}
-                longitude={longitude}
-                location={location}
-              />
-            )
+            <WeatherPage
+              onCitySelect={handleCitySelect}
+              latitude={latitude}
+              longitude={longitude}
+              location={location}
+            />
           }
         />
       </Routes>

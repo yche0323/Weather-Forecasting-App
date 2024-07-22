@@ -1,6 +1,7 @@
 .weatherpage {
-    background-color: purple;
-    height: 100vh;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .outer-header {
@@ -29,11 +30,35 @@
     padding-left: 30px;
 }
 
-.search-bar {
+.inner-header .search-bar {
     width: 1000px;
+    padding-right: 10px;
 }
 
-.location-button {
+.inner-header .location-button {
     padding-top: 5px;
-    padding-left: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 10%;
+    border: none;
+}
+
+.inner-header .location-button img {
+    height: 29px;
+    widtH: 29px;
+}
+
+.location-header {
+    left: 50%;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+.city {
+    font-size: 60px;
+}
+
+.country {
+    font-size: 20px;
 }
