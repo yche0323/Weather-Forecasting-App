@@ -10,81 +10,6 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/weather', async (req: Request, res: Response) => {
-    const latitude = req.query.latitude as string;
-    const longitude = req.query.longitude as string;
-
-    if (!latitude || !longitude) {
-        return res.status(400).json({ error: 'Latitude and longitude are required' });
-    }
-
-    // Define params for the API request
-    const params = {
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude),
-        hourly: "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,wind_speed_10m",
-        daily: "temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max",
-        timezone: "auto"
-    }
-
-    // API endpoint
-    const url = 'https://api.open-meteo.com/v1/forecast';
-
-    try{
-        // Fetching data
-        const responses = await fetchWeatherApi(url, params);
-
-        const response = responses[0];
-
-        const utcOffsetSeconds = response.utcOffsetSeconds();
-
-        const hourly = response.hourly()!;
-        const daily = response.daily()!;
-
-        let sunriseTimes: string[] = [];
-        let sunsetTimes: string[] = [];
-
-        for(let i = 0; i < daily.variables(2)!.valuesInt64Length(); i++){
-            let sunriseTime: number = Number(daily.variables(2)!.valuesInt64(i)!);
-            let sunsetTime: number = Number(daily.variables(3)!.valuesInt64(i)!);
-
-            sunriseTimes.push(formatTimeToAMPM(new Date((sunriseTime + utcOffsetSeconds) * 1000)));
-            sunsetTimes.push(formatTimeToAMPM(new Date((sunsetTime + utcOffsetSeconds) * 1000)));
-        }
-
-        // Note: The order of weather variables in the URL query and the indices below need to match!
-        const weatherData = {
-            hourly: {
-                time: range(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()).map(
-                    (t) => new Date((t + utcOffsetSeconds) * 1000)
-                ),
-                temperature2m: hourly.variables(0)!.valuesArray()!,
-                humidity2m: hourly.variables(1)!.valuesArray()!,
-                apparentTemperature: hourly.variables(2)!.valuesArray()!,
-                percipitationProb: hourly.variables(3)!.valuesArray()!,
-                percipitation: hourly.variables(4)!.valuesArray()!,
-                windSpeed10m: hourly.variables(5)!.valuesArray()!,
-            },
-            daily: {
-                time: range(Number(daily.time()), Number(daily.timeEnd()), daily.interval()).map(
-                    (t) => new Date((t + utcOffsetSeconds) * 1000)
-                ),
-                maxTemperature2m: daily.variables(0)!.valuesArray()!,
-                minTemperature2m: daily.variables(1)!.valuesArray()!,
-                sunrise: sunriseTimes,
-                sunset: sunsetTimes,
-                uvIndex: daily.variables(4)!.valuesArray()!,
-            }
-        };
-
-        // Send the processed weather data as JSON response
-        res.json(weatherData);
-    } catch (error) {
-        console.error('Error fetching weather data:', error);
-        res.status(500).json({ error: 'Failed to fetch weather data' });
-    }
-});
-
 function formatTimeToAMPM(dateTime: Date): string{
     let hours = dateTime.getHours();
     const minutes = dateTime.getMinutes();
@@ -101,6 +26,83 @@ function formatTimeToAMPM(dateTime: Date): string{
 
 const range = (start: number, stop: number, step: number) =>
 	Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
+
+app.get('/weather', async (req: Request, res: Response) => {
+    const latitude = req.query.latitude as string;
+    const longitude = req.query.longitude as string;
+
+    if (!latitude || !longitude) {
+        return res.status(400).json({ error: 'Latitude and longitude are required' });
+    }
+
+    // Define params for the API request
+    const params = {
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+        hourly: "temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m",
+        daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max",
+        // current: "temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m",
+        timezone: "auto",
+        forecast_days: "1"
+    }
+
+    // API endpoint
+    const url = 'https://api.open-meteo.com/v1/forecast';
+
+    try{
+        // Fetching data
+        const responses = await fetchWeatherApi(url, params);
+
+        const response = responses[0];
+
+        const utcOffsetSeconds = response.utcOffsetSeconds();
+
+        const hourly = response.hourly()!;
+        const daily = response.daily()!;
+        // const current = response.current()!;
+
+        let sunriseTimes: string[] = [];
+        let sunsetTimes: string[] = [];
+
+        for(let i = 0; i < daily.variables(3)!.valuesInt64Length(); i++){
+            let sunriseTime: number = Number(daily.variables(3)!.valuesInt64(i)!);
+            let sunsetTime: number = Number(daily.variables(4)!.valuesInt64(i)!);
+
+            sunriseTimes.push(formatTimeToAMPM(new Date((sunriseTime + utcOffsetSeconds) * 1000)));
+            sunsetTimes.push(formatTimeToAMPM(new Date((sunsetTime + utcOffsetSeconds) * 1000)));
+        }
+
+        // Note: The order of weather variables in the URL query and the indices below need to match!
+        const weatherData = {
+            hourlyTemp: hourly.variables(0)!.valuesArray()!,
+            hourlyAppTemp: hourly.variables(1)!.valuesArray()!,
+            hourlyPrecProb: hourly.variables(2)!.valuesArray()!,
+            hourlyPrec: hourly.variables(3)!.valuesArray()!,
+            hourlyWeatherCode: hourly.variables(4)!.valuesArray()!,
+            hourlyWindSpeed: hourly.variables(5)!.valuesArray()!,
+            dates: range(Number(daily.time()), Number(daily.timeEnd()), daily.interval()).map(
+                (t) => new Date((t + utcOffsetSeconds) * 1000)
+            ),
+            dailyWeatherCode: daily.variables(0)!.valuesArray()!,
+            dailyMaxTemp: daily.variables(1)!.valuesArray()!,
+            dailyMinTemp: daily.variables(2)!.valuesArray()!,
+            dailySunrise: sunriseTimes,
+            dailySunset: sunsetTimes,
+            dailyUVIndex: daily.variables(5)!.valuesArray()!,
+            currTemp: hourly.variables(0)!.valuesArray()![0],
+            currAppTemp: hourly.variables(1)!.valuesArray()![0],
+            currPrec: hourly.variables(3)!.valuesArray()![0],
+            currWeatherCode: hourly.variables(4)!.valuesArray()![0],
+            currWindSpeed: hourly.variables(5)!.valuesArray()![0],
+        };
+
+        // Send the processed weather data as JSON response
+        res.json(weatherData);
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        res.status(500).json({ error: 'Failed to fetch weather data' });
+    }
+});
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => {

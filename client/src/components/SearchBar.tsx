@@ -61,6 +61,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
   const handleChange = (selectedOption: CityOption | null) => {
     if (selectedOption) {
       const { city, state, country } = selectedOption.value;
+      console.log(
+        `lat: ${selectedOption.value.lat}, lng: ${selectedOption.value.lng}`
+      );
       console.log(`Selected city: ${city}, ${state}, ${country}`);
       fetchCoordinates(city, state, country);
     }
