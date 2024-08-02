@@ -2,7 +2,7 @@ import React from "react";
 import SearchBar from "../components/SearchBar";
 import LocationButton from "../components/LocationButton";
 import WeatherComponent from "../components/WeatherComponent";
-import logo from "../images/logo.png";
+import logo from "../images/WeatherIcons/partly-cloudy-day.svg";
 import { useNavigate } from "react-router-dom";
 import "../css/WeatherPage.css";
 

@@ -2,7 +2,7 @@
 import React from "react";
 import { Line } from "react-chartjs-2";
 import {
-  Chart,
+  Chart as ChartJS,
   LineElement,
   PointElement,
   LinearScale,
@@ -14,7 +14,7 @@ import {
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 
-Chart.register(
+ChartJS.register(
   LineElement,
   PointElement,
   LinearScale,
@@ -25,17 +25,30 @@ Chart.register(
 );
 
 interface TemperatureLineChartProps {
-  data: number[];
+  data: number[][];
   labels: string[];
-  dataLabel: string;
-  unit: string;
+  dataLabels: string[];
+  unit: string[];
+  borderColors: string[];
+  borderDashes: number[][];
+}
+
+interface DatasetsProps {
+  label: string;
+  borderColor: string;
+  backgroundColor: string;
+  borderDash: number[];
+  borderWidth: number;
+  data: any;
 }
 
 const LineChart: React.FC<TemperatureLineChartProps> = ({
   data,
   labels,
-  dataLabel,
+  dataLabels,
   unit,
+  borderColors,
+  borderDashes,
 }) => {
   const parseTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(":").map(Number);
@@ -44,26 +57,32 @@ const LineChart: React.FC<TemperatureLineChartProps> = ({
     return newTime;
   };
 
-  let temp_arr: number[] = data;
-  temp_arr = temp_arr.map((num) => parseFloat(num.toFixed(1)));
-  const minY = Math.floor(Math.min(...temp_arr));
-  const maxY = Math.ceil(Math.max(...temp_arr));
+  let temp_arrs: number[][] = data;
+  for (let i = 0; i < temp_arrs.length; i++) {
+    temp_arrs[i] = temp_arrs[i].map((num) => parseFloat(num.toFixed(1)));
+  }
+
+  const datasetsArray: DatasetsProps[] = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const datasetObj = {} as DatasetsProps;
+
+    datasetObj.label = dataLabels[i];
+    datasetObj.borderColor = borderColors[i];
+    datasetObj.borderWidth = 1;
+    datasetObj.borderDash = borderDashes[i];
+    datasetObj.data = labels.map((item: string, index: number) => {
+      return {
+        x: parseTime(item),
+        y: temp_arrs[i][index],
+      };
+    });
+
+    datasetsArray.push(datasetObj);
+  }
 
   const chartData = {
-    datasets: [
-      {
-        label: dataLabel,
-        borderColor: "rgba(0, 0, 0, 1)",
-        backgroundColor: "rgba(0, 0, 0, 0.2)",
-        borderWidth: 1,
-        data: labels.map((item, index) => {
-          return {
-            x: parseTime(item),
-            y: temp_arr[index],
-          };
-        }),
-      },
-    ],
+    datasets: datasetsArray,
   };
 
   const options = {
@@ -80,10 +99,6 @@ const LineChart: React.FC<TemperatureLineChartProps> = ({
           },
         },
       },
-      y: {
-        min: minY,
-        max: maxY,
-      },
     },
     plugins: {
       legend: {
@@ -94,8 +109,11 @@ const LineChart: React.FC<TemperatureLineChartProps> = ({
         intersect: false,
         callbacks: {
           label: (context: TooltipItem<"line">) => {
-            const yData = context.parsed.y as number;
-            return `${dataLabel}: ${yData}${unit}`;
+            const datasetIndex = context.datasetIndex;
+            const dataIndex = context.dataIndex;
+            const dataset = context.chart.data.datasets[datasetIndex];
+            const yData = (dataset.data[dataIndex] as { y: number }).y;
+            return `${dataset.label}: ${yData}${unit[datasetIndex]}`;
           },
         },
       },
@@ -105,8 +123,8 @@ const LineChart: React.FC<TemperatureLineChartProps> = ({
   return (
     <div
       style={{
-        width: "1700px",
-        height: "250px",
+        width: "1300px",
+        height: "150px",
         margin: "0 auto",
         display: "flex",
         justifyContent: "center",
@@ -114,6 +132,7 @@ const LineChart: React.FC<TemperatureLineChartProps> = ({
         backgroundColor: "skyblue",
         boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
         borderRadius: "10px",
+        marginBottom: "10px",
       }}
     >
       <Line data={chartData} options={options} />

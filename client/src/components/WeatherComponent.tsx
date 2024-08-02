@@ -147,19 +147,25 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
       {error && <p>Error: {error}</p>}
       {dailyWeatherData && (
         <LineChart
-          data={dailyWeatherData[0].hourlyTemp}
+          data={[
+            dailyWeatherData[0].hourlyTemp,
+            dailyWeatherData[0].hourlyAppTemp,
+          ]}
           labels={generateHours()}
-          dataLabel="Temperature"
-          unit="°C"
+          dataLabels={["Temperature", "Feels Like"]}
+          unit={["°C", "°C"]}
+          borderColors={["red", "blue"]}
+          borderDashes={[[], [5, 5]]}
         />
       )}
-      {dailyWeatherData && <p>{dailyWeatherData[0].date}</p>}
       {dailyWeatherData && (
         <LineChart
-          data={dailyWeatherData[0].hourlyWindSpeed}
+          data={[dailyWeatherData[0].hourlyWindSpeed]}
           labels={generateHours()}
-          dataLabel="Wind Speed"
-          unit="km/h"
+          dataLabels={["Wind Speed"]}
+          unit={["km/h"]}
+          borderColors={["green"]}
+          borderDashes={[[]]}
         />
       )}
     </div>
