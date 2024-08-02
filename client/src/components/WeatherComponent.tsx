@@ -5,6 +5,7 @@ interface WeatherComponentProps {
   latitude: string;
   longitude: string;
   location: string;
+  selectedDate: string;
 }
 
 interface AnyObject {
@@ -106,6 +107,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
   latitude,
   longitude,
   location,
+  selectedDate,
 }) => {
   const [dailyWeatherData, setDailyWeatherData] = useState<
     DailyWeatherData[] | null
@@ -118,7 +120,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
     const fetchWeatherData = async () => {
       try {
         const response = await fetch(
-          `/weather?latitude=${latitude}&longitude=${longitude}`
+          `/weather?latitude=${latitude}&longitude=${longitude}&selectedDate=${selectedDate}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch weather data");
@@ -140,7 +142,14 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
     };
 
     fetchWeatherData();
-  }, [latitude, longitude, location, dailyWeatherData, currWeatherData]);
+  }, [
+    latitude,
+    longitude,
+    location,
+    selectedDate,
+    dailyWeatherData,
+    currWeatherData,
+  ]);
 
   return (
     <div>

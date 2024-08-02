@@ -17,20 +17,22 @@
 }
 
 .search-container .search-bar {
-    margin-right: 10px;
     width: 400px;
 }
 
-.search-container .location-button {
+.search-container .button {
+    margin-right: 10px;
+    margin-left: 10px;
     padding-top: 5px;
     padding-left: 5px;
     padding-right: 5px;
-    border-radius: 10%;
-    border: none;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
 }
 
 
-.search-container .location-button img {
-    height: 29px;
-    widtH: 29px;
+.search-container .button img {
+    height: 28px;
+    widtH: 28px;
 }

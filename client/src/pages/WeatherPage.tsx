@@ -1,6 +1,7 @@
 import React from "react";
 import SearchBar from "../components/SearchBar";
 import LocationButton from "../components/LocationButton";
+import Calendar from "../components/Calendar";
 import WeatherComponent from "../components/WeatherComponent";
 import logo from "../images/WeatherIcons/partly-cloudy-day.svg";
 import { useNavigate } from "react-router-dom";
@@ -8,9 +9,11 @@ import "../css/WeatherPage.css";
 
 interface WeatherPageProps {
   onCitySelect: (lat: string, lng: string, loc: string) => void;
+  onDateSelect: (date: string) => void;
   latitude: string | null;
   longitude: string | null;
   location: string | null;
+  selectedDate: string;
 }
 
 const WeatherPage: React.FC<WeatherPageProps> = (props) => {
@@ -27,6 +30,7 @@ const WeatherPage: React.FC<WeatherPageProps> = (props) => {
           <img className="logo" src={logo} alt="Logo" />
         </button>
         <div className="inner-header">
+          <Calendar onDateSelect={props.onDateSelect} />
           <SearchBar onCitySelect={props.onCitySelect} />
           <LocationButton onCitySelect={props.onCitySelect} />
         </div>
@@ -44,6 +48,7 @@ const WeatherPage: React.FC<WeatherPageProps> = (props) => {
               latitude={props.latitude}
               longitude={props.longitude}
               location={props.location}
+              selectedDate={props.selectedDate}
             />
           )}
         </div>

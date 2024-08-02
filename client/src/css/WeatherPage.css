@@ -32,10 +32,11 @@
 
 .inner-header .search-bar {
     width: 1000px;
-    padding-right: 10px;
 }
 
-.inner-header .location-button {
+.inner-header .button {
+    margin-right: 10px;
+    margin-left: 10px;
     padding-top: 5px;
     padding-left: 5px;
     padding-right: 5px;
@@ -43,7 +44,7 @@
     border: none;
 }
 
-.inner-header .location-button img {
+.inner-header .button img {
     height: 29px;
     widtH: 29px;
 }

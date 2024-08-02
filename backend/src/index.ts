@@ -30,21 +30,28 @@ const range = (start: number, stop: number, step: number) =>
 app.get('/weather', async (req: Request, res: Response) => {
     const latitude = req.query.latitude as string;
     const longitude = req.query.longitude as string;
+    const selectedDate = req.query.selectedDate as string;
 
     if (!latitude || !longitude) {
         return res.status(400).json({ error: 'Latitude and longitude are required' });
     }
 
     // Define params for the API request
-    const params = {
+    const baseParams = {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
         hourly: "temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m",
         daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max",
         // current: "temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m",
         timezone: "auto",
-        forecast_days: "1"
-    }
+    };
+
+    const conditionalParams = selectedDate ? {start_date: selectedDate, end_date: selectedDate} : {forecast_days: "1"};
+
+    const params = {
+        ...baseParams,
+        ...conditionalParams,
+    };
 
     // API endpoint
     const url = 'https://api.open-meteo.com/v1/forecast';

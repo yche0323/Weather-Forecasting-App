@@ -76,7 +76,7 @@ const LocationButton: React.FC<LocationButtonProps> = ({ onCitySelect }) => {
 
   return (
     <div>
-      <button className="location-button" onClick={handleGetLocation}>
+      <button className="button" onClick={handleGetLocation}>
         <img src={img} alt="Current Location Button" />
       </button>
     </div>
