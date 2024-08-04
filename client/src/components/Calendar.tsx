@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.module.css";
 import img from "../images/calendar-icon.svg";
@@ -9,7 +9,7 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ onDateSelect }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isOpen, setIsOpen] = useState(false);
 
   const handleButtonClick = () => {
@@ -17,15 +17,16 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect }) => {
   };
 
   const handleSelectDate = (date: Date | null) => {
-    setSelectedDate(date);
     setIsOpen(false);
     if (date) {
-      const formattedDate: string = format(date, "yyyy-MM-dd");
-      onDateSelect(formattedDate);
-    } else {
-      onDateSelect("");
+      setSelectedDate(date);
     }
   };
+
+  useEffect(() => {
+    const formattedDate: string = format(selectedDate, "yyyy-MM-dd");
+    onDateSelect(formattedDate);
+  }, [selectedDate, onDateSelect]);
 
   return (
     <div>

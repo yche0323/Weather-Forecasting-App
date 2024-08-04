@@ -37,20 +37,15 @@ app.get('/weather', async (req: Request, res: Response) => {
     }
 
     // Define params for the API request
-    const baseParams = {
+    const params = {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
-        hourly: "temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m",
+        hourly: "temperature_2m,apparent_temperature,precipitation_probability,weather_code,wind_speed_10m",
         daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max",
-        // current: "temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m",
+        current: "temperature_2m,apparent_temperature,weather_code,wind_speed_10m",
         timezone: "auto",
-    };
-
-    const conditionalParams = selectedDate ? {start_date: selectedDate, end_date: selectedDate} : {forecast_days: "1"};
-
-    const params = {
-        ...baseParams,
-        ...conditionalParams,
+        start_date: selectedDate,
+        end_date: selectedDate,
     };
 
     // API endpoint
@@ -66,7 +61,7 @@ app.get('/weather', async (req: Request, res: Response) => {
 
         const hourly = response.hourly()!;
         const daily = response.daily()!;
-        // const current = response.current()!;
+        const current = response.current()!;
 
         let sunriseTimes: string[] = [];
         let sunsetTimes: string[] = [];
@@ -84,9 +79,8 @@ app.get('/weather', async (req: Request, res: Response) => {
             hourlyTemp: hourly.variables(0)!.valuesArray()!,
             hourlyAppTemp: hourly.variables(1)!.valuesArray()!,
             hourlyPrecProb: hourly.variables(2)!.valuesArray()!,
-            hourlyPrec: hourly.variables(3)!.valuesArray()!,
-            hourlyWeatherCode: hourly.variables(4)!.valuesArray()!,
-            hourlyWindSpeed: hourly.variables(5)!.valuesArray()!,
+            hourlyWeatherCode: hourly.variables(3)!.valuesArray()!,
+            hourlyWindSpeed: hourly.variables(4)!.valuesArray()!,
             dates: range(Number(daily.time()), Number(daily.timeEnd()), daily.interval()).map(
                 (t) => new Date((t + utcOffsetSeconds) * 1000)
             ),
@@ -96,11 +90,10 @@ app.get('/weather', async (req: Request, res: Response) => {
             dailySunrise: sunriseTimes,
             dailySunset: sunsetTimes,
             dailyUVIndex: daily.variables(5)!.valuesArray()!,
-            currTemp: hourly.variables(0)!.valuesArray()![0],
-            currAppTemp: hourly.variables(1)!.valuesArray()![0],
-            currPrec: hourly.variables(3)!.valuesArray()![0],
-            currWeatherCode: hourly.variables(4)!.valuesArray()![0],
-            currWindSpeed: hourly.variables(5)!.valuesArray()![0],
+            currTemp: current.variables(0)!.valuesArray()!,
+            currAppTemp: current.variables(1)!.valuesArray()!,
+            currWeatherCode: current.variables(2)!.valuesArray()!,
+            currWindSpeed: current.variables(3)!.valuesArray()!,
         };
 
         // Send the processed weather data as JSON response

@@ -15,6 +15,7 @@ const App: React.FC = () => {
     setLatitude(lat);
     setLongitude(lng);
     setLocation(loc);
+    console.log(`lat: ${lat}, lng: ${lng}, loc: ${loc}`);
     navigate("/weatherpage");
   };
 

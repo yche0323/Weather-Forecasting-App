@@ -1,48 +1,44 @@
 import React from "react";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import {
-  Chart as LineChartJS,
-  LineElement,
-  PointElement,
+  Chart as BarChartJS,
+  BarElement,
+  CategoryScale,
   LinearScale,
   Title,
   Tooltip,
-  CategoryScale,
-  TimeScale,
-  TooltipItem,
+  Legend,
   ChartOptions,
+  TooltipItem,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 
-LineChartJS.register(
-  LineElement,
-  PointElement,
+BarChartJS.register(
+  BarElement,
+  CategoryScale,
   LinearScale,
   Title,
   Tooltip,
-  CategoryScale,
-  TimeScale
+  Legend
 );
 
-interface LineChartProps {
+interface BarChartProps {
   data: number[][];
   labels: string[];
   dataLabels: string[];
   unit: string[];
-  borderColors: string[];
-  borderDashes: number[][];
+  backgroundColors: string[];
 }
 
 interface DatasetsProps {
   label: string;
-  borderColor: string;
   backgroundColor: string;
-  borderDash: number[];
+  borderColor: string;
   borderWidth: number;
   data: any;
 }
 
-const LineChart: React.FC<LineChartProps> = (props) => {
+const BarChart: React.FC<BarChartProps> = (props) => {
   const parseTime = (timeString: string) => {
     const [hours, minutes] = timeString.split(":").map(Number);
     const newTime = new Date();
@@ -61,9 +57,9 @@ const LineChart: React.FC<LineChartProps> = (props) => {
     const datasetObj = {} as DatasetsProps;
 
     datasetObj.label = props.dataLabels[i];
-    datasetObj.borderColor = props.borderColors[i];
+    datasetObj.backgroundColor = props.backgroundColors[i];
+    datasetObj.borderColor = "rgba(0, 0, 0, 0.1)";
     datasetObj.borderWidth = 1;
-    datasetObj.borderDash = props.borderDashes[i];
     datasetObj.data = props.labels.map((item: string, index: number) => {
       return {
         x: parseTime(item),
@@ -78,7 +74,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
     datasets: datasetsArray,
   };
 
-  const options: ChartOptions<"line"> = {
+  const options: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
@@ -111,7 +107,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
         mode: "index" as const,
         intersect: false,
         callbacks: {
-          label: (context: TooltipItem<"line">) => {
+          label: (context: TooltipItem<"bar">) => {
             const datasetIndex = context.datasetIndex;
             const dataIndex = context.dataIndex;
             const dataset = context.chart.data.datasets[datasetIndex];
@@ -125,9 +121,9 @@ const LineChart: React.FC<LineChartProps> = (props) => {
 
   return (
     <div className="chart">
-      <Line data={chartData} options={options} />
+      <Bar data={chartData} options={options} />
     </div>
   );
 };
 
-export default LineChart;
+export default BarChart;

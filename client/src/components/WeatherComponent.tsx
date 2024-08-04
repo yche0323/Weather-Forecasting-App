@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import LineChart from "./WeatherSubcomponents/LineChart";
+import BarChart from "./WeatherSubcomponents/BarChart";
 
 interface WeatherComponentProps {
   latitude: string;
@@ -17,7 +18,6 @@ interface DailyWeatherData {
   hourlyTemp: number[];
   hourlyAppTemp: number[];
   hourlyPrecProb: number[];
-  hourlyPrec: number[];
   hourlyWeatherCode: number[];
   hourlyWindSpeed: number[];
   dailyWeatherCode: number;
@@ -31,7 +31,6 @@ interface DailyWeatherData {
 interface CurrentWeatherData {
   currTemp: number;
   currAppTemp: number;
-  currPrec: number;
   currWeatherCode: number;
   currWindSpeed: number;
 }
@@ -81,7 +80,6 @@ const processDailyWeatherData = (data: AnyObject): DailyWeatherData[] => {
     resultObj.hourlyTemp = arrObject.hourlyTemp.slice(start, end);
     resultObj.hourlyAppTemp = arrObject.hourlyAppTemp.slice(start, end);
     resultObj.hourlyPrecProb = arrObject.hourlyPrecProb.slice(start, end);
-    resultObj.hourlyPrec = arrObject.hourlyPrec.slice(start, end);
     resultObj.hourlyWeatherCode = arrObject.hourlyWeatherCode.slice(start, end);
     resultObj.hourlyWindSpeed = arrObject.hourlyWindSpeed.slice(start, end);
 
@@ -95,7 +93,6 @@ const processCurrentWeatherData = (data: AnyObject): CurrentWeatherData => {
   const result: CurrentWeatherData = {
     currTemp: data.currTemp,
     currAppTemp: data.currAppTemp,
-    currPrec: data.currPrec,
     currWeatherCode: data.currWeatherCode,
     currWindSpeed: data.currWindSpeed,
   };
@@ -115,6 +112,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
   const [currWeatherData, setCurrWeatherData] =
     useState<CurrentWeatherData | null>(null);
   const [error, setError] = useState("");
+  const hours = generateHours();
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -155,27 +153,34 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
     <div>
       {error && <p>Error: {error}</p>}
       {dailyWeatherData && (
-        <LineChart
-          data={[
-            dailyWeatherData[0].hourlyTemp,
-            dailyWeatherData[0].hourlyAppTemp,
-          ]}
-          labels={generateHours()}
-          dataLabels={["Temperature", "Feels Like"]}
-          unit={["°C", "°C"]}
-          borderColors={["red", "blue"]}
-          borderDashes={[[], [5, 5]]}
-        />
-      )}
-      {dailyWeatherData && (
-        <LineChart
-          data={[dailyWeatherData[0].hourlyWindSpeed]}
-          labels={generateHours()}
-          dataLabels={["Wind Speed"]}
-          unit={["km/h"]}
-          borderColors={["green"]}
-          borderDashes={[[]]}
-        />
+        <div>
+          <LineChart
+            data={[
+              dailyWeatherData[0].hourlyTemp,
+              dailyWeatherData[0].hourlyAppTemp,
+            ]}
+            labels={hours}
+            dataLabels={["Temperature", "Feels Like"]}
+            unit={["°C", "°C"]}
+            borderColors={["red", "blue"]}
+            borderDashes={[[], [5, 5]]}
+          />
+          <LineChart
+            data={[dailyWeatherData[0].hourlyWindSpeed]}
+            labels={hours}
+            dataLabels={["Wind Speed"]}
+            unit={["km/h"]}
+            borderColors={["green"]}
+            borderDashes={[[]]}
+          />
+          <BarChart
+            data={[dailyWeatherData[0].hourlyPrecProb]}
+            labels={hours}
+            dataLabels={["Precipitation Probability"]}
+            unit={["%"]}
+            backgroundColors={["purple"]}
+          />
+        </div>
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import LocationButton from "../components/LocationButton";
 import Calendar from "../components/Calendar";
@@ -23,6 +23,32 @@ const WeatherPage: React.FC<WeatherPageProps> = (props) => {
     navigate("/");
   };
 
+  useEffect(() => {
+    const today = new Date();
+    let fullDate = `${today.getFullYear()}-${(today.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
+
+    console.log(fullDate);
+
+    if (props.selectedDate) {
+      fullDate = props.selectedDate;
+    }
+
+    const dateObj = new Date(fullDate);
+
+    const month = dateObj.toLocaleDateString("en-GB", { month: "long" });
+    const day = props.selectedDate.slice(-2);
+
+    const monthElement = document.getElementById("month");
+    const dayElement = document.getElementById("day");
+
+    if (monthElement && dayElement) {
+      monthElement.innerText = month;
+      dayElement.innerText = day;
+    }
+  }, [props.location, props.selectedDate]);
+
   return (
     <div className="weatherpage">
       <div className="outer-header">
@@ -37,12 +63,18 @@ const WeatherPage: React.FC<WeatherPageProps> = (props) => {
       </div>
       {props.latitude && props.longitude && props.location && (
         <div>
-          <h1 className="location-header">
-            <span className="city">{props.location.split(",")[0]}</span>
-            <span className="country">
-              {", " + props.location.split(",")[1]}
-            </span>
-          </h1>
+          <div className="content-header">
+            <div className="date-displayer">
+              <div className="month" id="month"></div>
+              <div className="day" id="day"></div>
+            </div>
+            <h1 className="location-header">
+              <span className="city">{props.location.split(",")[0]}</span>
+              <span className="country">
+                {", " + props.location.split(",")[1]}
+              </span>
+            </h1>
+          </div>
           {props.latitude && props.longitude && props.location && (
             <WeatherComponent
               latitude={props.latitude}
