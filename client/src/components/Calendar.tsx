@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.module.css";
 import img from "../images/calendar-icon.svg";
-import { format } from "date-fns";
+import { format, addDays, isBefore, isAfter } from "date-fns";
 
 interface CalendarProps {
   onDateSelect: (date: string) => void;
@@ -17,9 +17,26 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect }) => {
   };
 
   const handleSelectDate = (date: Date | null) => {
-    setIsOpen(false);
     if (date) {
+      const minDate = new Date("2016-01-01");
+      const maxDate = addDays(new Date(), 15);
+
+      if (isBefore(date, minDate)) {
+        alert("Selected date cannot be before 2016-01-01.");
+        return;
+      }
+
+      if (isAfter(date, maxDate)) {
+        alert(
+          `Selected date cannot be after ${maxDate.getFullYear()}-${String(
+            maxDate.getMonth() + 1
+          ).padStart(2, "0")}-${String(maxDate.getDate()).padStart(2, "0")}.`
+        );
+        return;
+      }
+
       setSelectedDate(date);
+      setIsOpen(false);
     }
   };
 

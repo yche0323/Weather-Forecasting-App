@@ -3,6 +3,11 @@ import LineChart from "./WeatherSubcomponents/LineChart";
 import BarChart from "./WeatherSubcomponents/BarChart";
 
 interface WeatherComponentProps {
+  setCurrWeatherData: (
+    currTemp: number,
+    currAppTemp: number,
+    currWeatherCode: number
+  ) => void;
   latitude: string;
   longitude: string;
   location: string;
@@ -13,26 +18,13 @@ interface AnyObject {
   [key: string]: any;
 }
 
-interface DailyWeatherData {
+interface HourlyWeatherData {
   date: string;
   hourlyTemp: number[];
   hourlyAppTemp: number[];
   hourlyPrecProb: number[];
   hourlyWeatherCode: number[];
   hourlyWindSpeed: number[];
-  dailyWeatherCode: number;
-  dailyMaxTemp: number;
-  dailyMinTemp: number;
-  dailySunrise: string;
-  dailySunset: string;
-  dailyUVIndex: number;
-}
-
-interface CurrentWeatherData {
-  currTemp: number;
-  currAppTemp: number;
-  currWeatherCode: number;
-  currWindSpeed: number;
 }
 
 const generateHours = (): string[] => {
@@ -49,7 +41,7 @@ const generateHours = (): string[] => {
   return result;
 };
 
-const processDailyWeatherData = (data: AnyObject): DailyWeatherData[] => {
+const processHourlyWeatherData = (data: AnyObject): HourlyWeatherData => {
   const arrObject: AnyObject = {};
 
   // Convert values in the data object to arrays if they are objects
@@ -61,56 +53,25 @@ const processDailyWeatherData = (data: AnyObject): DailyWeatherData[] => {
     }
   }
 
-  const result: DailyWeatherData[] = [];
-  for (let i = 0; i < arrObject.dates.length; i++) {
-    const resultObj = {} as DailyWeatherData;
-
-    // Adding daily data
-    resultObj.date = arrObject.dates[i];
-    resultObj.dailyWeatherCode = arrObject.dailyWeatherCode[i];
-    resultObj.dailyMaxTemp = arrObject.dailyMaxTemp[i];
-    resultObj.dailyMinTemp = arrObject.dailyMinTemp[i];
-    resultObj.dailySunrise = arrObject.dailySunrise[i];
-    resultObj.dailySunset = arrObject.dailySunset[i];
-    resultObj.dailyUVIndex = arrObject.dailyUVIndex[i];
-
-    // Adding hourly data
-    const start = i * 24;
-    const end = start + 24;
-    resultObj.hourlyTemp = arrObject.hourlyTemp.slice(start, end);
-    resultObj.hourlyAppTemp = arrObject.hourlyAppTemp.slice(start, end);
-    resultObj.hourlyPrecProb = arrObject.hourlyPrecProb.slice(start, end);
-    resultObj.hourlyWeatherCode = arrObject.hourlyWeatherCode.slice(start, end);
-    resultObj.hourlyWindSpeed = arrObject.hourlyWindSpeed.slice(start, end);
-
-    result.push(resultObj);
-  }
-
-  return result;
-};
-
-const processCurrentWeatherData = (data: AnyObject): CurrentWeatherData => {
-  const result: CurrentWeatherData = {
-    currTemp: data.currTemp,
-    currAppTemp: data.currAppTemp,
-    currWeatherCode: data.currWeatherCode,
-    currWindSpeed: data.currWindSpeed,
-  };
+  const result = {} as HourlyWeatherData;
+  result.hourlyTemp = arrObject.hourlyTemp;
+  result.hourlyAppTemp = arrObject.hourlyAppTemp;
+  result.hourlyPrecProb = arrObject.hourlyPrecProb;
+  result.hourlyWeatherCode = arrObject.hourlyWeatherCode;
+  result.hourlyWindSpeed = arrObject.hourlyWindSpeed;
 
   return result;
 };
 
 const WeatherComponent: React.FC<WeatherComponentProps> = ({
+  setCurrWeatherData,
   latitude,
   longitude,
   location,
   selectedDate,
 }) => {
-  const [dailyWeatherData, setDailyWeatherData] = useState<
-    DailyWeatherData[] | null
-  >(null);
-  const [currWeatherData, setCurrWeatherData] =
-    useState<CurrentWeatherData | null>(null);
+  const [hourlyWeatherData, setHourlyWeatherData] =
+    useState<HourlyWeatherData | null>(null);
   const [error, setError] = useState("");
   const hours = generateHours();
 
@@ -124,10 +85,13 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
           throw new Error("Failed to fetch weather data");
         }
         const data = await response.json();
-        const dailyData = processDailyWeatherData(data);
-        const currData = processCurrentWeatherData(data);
-        setDailyWeatherData(dailyData);
-        setCurrWeatherData(currData);
+        const hourlyData = processHourlyWeatherData(data);
+        setHourlyWeatherData(hourlyData);
+        setCurrWeatherData(
+          data.currTemp,
+          data.currAppTemp,
+          data.currWeatherCode
+        );
         setError("");
       } catch (e) {
         if (e instanceof Error) {
@@ -135,7 +99,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
         } else {
           setError("An unknown error occurred");
         }
-        setDailyWeatherData(null);
+        setHourlyWeatherData(null);
       }
     };
 
@@ -145,19 +109,19 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
     longitude,
     location,
     selectedDate,
-    dailyWeatherData,
-    currWeatherData,
+    hourlyWeatherData,
+    setCurrWeatherData,
   ]);
 
   return (
     <div>
       {error && <p>Error: {error}</p>}
-      {dailyWeatherData && (
+      {hourlyWeatherData && (
         <div>
           <LineChart
             data={[
-              dailyWeatherData[0].hourlyTemp,
-              dailyWeatherData[0].hourlyAppTemp,
+              hourlyWeatherData.hourlyTemp,
+              hourlyWeatherData.hourlyAppTemp,
             ]}
             labels={hours}
             dataLabels={["Temperature", "Feels Like"]}
@@ -166,7 +130,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
             borderDashes={[[], [5, 5]]}
           />
           <LineChart
-            data={[dailyWeatherData[0].hourlyWindSpeed]}
+            data={[hourlyWeatherData.hourlyWindSpeed]}
             labels={hours}
             dataLabels={["Wind Speed"]}
             unit={["km/h"]}
@@ -174,7 +138,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
             borderDashes={[[]]}
           />
           <BarChart
-            data={[dailyWeatherData[0].hourlyPrecProb]}
+            data={[hourlyWeatherData.hourlyPrecProb]}
             labels={hours}
             dataLabels={["Precipitation Probability"]}
             unit={["%"]}

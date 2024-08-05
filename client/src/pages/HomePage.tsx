@@ -2,7 +2,7 @@ import React from "react";
 import SearchBar from "../components/SearchBar";
 import LocationButton from "../components/LocationButton";
 import Calendar from "../components/Calendar";
-import logo from "../images/WeatherIcons/partly-cloudy-day.svg";
+import logo from "../images/logo.svg";
 import "../css/HomePage.css";
 
 interface HomePageProps {

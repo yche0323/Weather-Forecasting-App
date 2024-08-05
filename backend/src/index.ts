@@ -41,8 +41,7 @@ app.get('/weather', async (req: Request, res: Response) => {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
         hourly: "temperature_2m,apparent_temperature,precipitation_probability,weather_code,wind_speed_10m",
-        daily: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max",
-        current: "temperature_2m,apparent_temperature,weather_code,wind_speed_10m",
+        current: "temperature_2m,apparent_temperature,weather_code",
         timezone: "auto",
         start_date: selectedDate,
         end_date: selectedDate,
@@ -57,22 +56,8 @@ app.get('/weather', async (req: Request, res: Response) => {
 
         const response = responses[0];
 
-        const utcOffsetSeconds = response.utcOffsetSeconds();
-
         const hourly = response.hourly()!;
-        const daily = response.daily()!;
         const current = response.current()!;
-
-        let sunriseTimes: string[] = [];
-        let sunsetTimes: string[] = [];
-
-        for(let i = 0; i < daily.variables(3)!.valuesInt64Length(); i++){
-            let sunriseTime: number = Number(daily.variables(3)!.valuesInt64(i)!);
-            let sunsetTime: number = Number(daily.variables(4)!.valuesInt64(i)!);
-
-            sunriseTimes.push(formatTimeToAMPM(new Date((sunriseTime + utcOffsetSeconds) * 1000)));
-            sunsetTimes.push(formatTimeToAMPM(new Date((sunsetTime + utcOffsetSeconds) * 1000)));
-        }
 
         // Note: The order of weather variables in the URL query and the indices below need to match!
         const weatherData = {
@@ -81,19 +66,9 @@ app.get('/weather', async (req: Request, res: Response) => {
             hourlyPrecProb: hourly.variables(2)!.valuesArray()!,
             hourlyWeatherCode: hourly.variables(3)!.valuesArray()!,
             hourlyWindSpeed: hourly.variables(4)!.valuesArray()!,
-            dates: range(Number(daily.time()), Number(daily.timeEnd()), daily.interval()).map(
-                (t) => new Date((t + utcOffsetSeconds) * 1000)
-            ),
-            dailyWeatherCode: daily.variables(0)!.valuesArray()!,
-            dailyMaxTemp: daily.variables(1)!.valuesArray()!,
-            dailyMinTemp: daily.variables(2)!.valuesArray()!,
-            dailySunrise: sunriseTimes,
-            dailySunset: sunsetTimes,
-            dailyUVIndex: daily.variables(5)!.valuesArray()!,
-            currTemp: current.variables(0)!.valuesArray()!,
-            currAppTemp: current.variables(1)!.valuesArray()!,
-            currWeatherCode: current.variables(2)!.valuesArray()!,
-            currWindSpeed: current.variables(3)!.valuesArray()!,
+            currTemp: current.variables(0)!.value(),
+            currAppTemp: current.variables(1)!.value(),
+            currWeatherCode: current.variables(2)!.value(),
         };
 
         // Send the processed weather data as JSON response

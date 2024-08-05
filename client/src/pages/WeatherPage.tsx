@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import LocationButton from "../components/LocationButton";
 import Calendar from "../components/Calendar";
+import CurrentWeatherComponent from "../components/WeatherSubcomponents/CurrentWeatherComponent";
 import WeatherComponent from "../components/WeatherComponent";
-import logo from "../images/WeatherIcons/partly-cloudy-day.svg";
+import logo from "../images/logo.svg";
 import { useNavigate } from "react-router-dom";
 import "../css/WeatherPage.css";
 
@@ -16,7 +17,30 @@ interface WeatherPageProps {
   selectedDate: string;
 }
 
+interface CurrentWeatherData {
+  currTemp: number;
+  currAppTemp: number;
+  currWeatherCode: number;
+}
+
 const WeatherPage: React.FC<WeatherPageProps> = (props) => {
+  const [currWeatherData, setCurrWeatherData] =
+    useState<CurrentWeatherData | null>(null);
+
+  const handleSetCurrWeatherData = (
+    currTemp: number,
+    currAppTemp: number,
+    currWeatherCode: number
+  ) => {
+    const result: CurrentWeatherData = {
+      currTemp: currTemp,
+      currAppTemp: currAppTemp,
+      currWeatherCode: currWeatherCode,
+    };
+
+    setCurrWeatherData(result);
+  };
+
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
@@ -51,38 +75,52 @@ const WeatherPage: React.FC<WeatherPageProps> = (props) => {
 
   return (
     <div className="weatherpage">
-      <div className="outer-header">
-        <button className="logo-button" onClick={handleLogoClick}>
-          <img className="logo" src={logo} alt="Logo" />
-        </button>
-        <div className="inner-header">
-          <Calendar onDateSelect={props.onDateSelect} />
-          <SearchBar onCitySelect={props.onCitySelect} />
-          <LocationButton onCitySelect={props.onCitySelect} />
+      <div className="outer-most-header">
+        <div className="outer-header">
+          <div className="inner-header">
+            <button className="logo-button" onClick={handleLogoClick}>
+              <img className="logo" src={logo} alt="Logo" />
+            </button>
+            <div className="search-container">
+              <Calendar onDateSelect={props.onDateSelect} />
+              <SearchBar onCitySelect={props.onCitySelect} />
+              <LocationButton onCitySelect={props.onCitySelect} />
+            </div>
+          </div>
+          {props.location && (
+            <div className="content-header">
+              <div className="date-displayer">
+                <div className="month" id="month"></div>
+                <div className="day" id="day"></div>
+              </div>
+              <h1 className="location-header">
+                <span className="city">{props.location.split(",")[0]}</span>
+                <span className="country">
+                  {", " + props.location.split(",")[1]}
+                </span>
+              </h1>
+            </div>
+          )}
         </div>
+        {currWeatherData && (
+          <CurrentWeatherComponent
+            currTemp={currWeatherData.currTemp}
+            currAppTemp={currWeatherData.currAppTemp}
+            currWeatherCode={currWeatherData.currWeatherCode}
+          />
+        )}
       </div>
       {props.latitude && props.longitude && props.location && (
         <div>
-          <div className="content-header">
-            <div className="date-displayer">
-              <div className="month" id="month"></div>
-              <div className="day" id="day"></div>
-            </div>
-            <h1 className="location-header">
-              <span className="city">{props.location.split(",")[0]}</span>
-              <span className="country">
-                {", " + props.location.split(",")[1]}
-              </span>
-            </h1>
-          </div>
-          {props.latitude && props.longitude && props.location && (
+          {
             <WeatherComponent
+              setCurrWeatherData={handleSetCurrWeatherData}
               latitude={props.latitude}
               longitude={props.longitude}
               location={props.location}
               selectedDate={props.selectedDate}
             />
-          )}
+          }
         </div>
       )}
     </div>
