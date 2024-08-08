@@ -97,16 +97,16 @@ npm start
 your-repo/
 │
 ├── backend/
-│ ├── env/ # Virtual environment
-│ ├── src/ # Backend source code
-│ ├── package.json # Backend npm packages
-│ └── requirements.txt # Python packages
+│ ├── src/
+│ ├── package.json
+│ └── tsconfig.json
 │
 ├── client/
-│ ├── src/ # Client source code
-│ ├── public/ # Public files
-│ ├── package.json # Client npm packages
+│ ├── src/
+│ ├── public/
+│ ├── package.json
 │ └── ... # Other client-related files
 │
-└── README.md # Project documentation
+├── .gitignore
+└── README.md
 ```
