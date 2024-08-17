@@ -1,3 +1,4 @@
+import path from 'path';
 import express, { Express, Request, Response } from 'express';
 import { fetchWeatherApi } from "openmeteo";
 import dotenv from 'dotenv';
@@ -10,7 +11,10 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 
-function formatTimeToAMPM(dateTime: Date): string{
+// Serving the static files from the React app
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+function formatTimeToAMPM(dateTime: Date): string {
     let hours = dateTime.getHours();
     const minutes = dateTime.getMinutes();
 
@@ -25,7 +29,7 @@ function formatTimeToAMPM(dateTime: Date): string{
 }
 
 const range = (start: number, stop: number, step: number) =>
-	Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
+    Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
 
 app.get('/weather', async (req: Request, res: Response) => {
     const latitude = req.query.latitude as string;
@@ -50,7 +54,7 @@ app.get('/weather', async (req: Request, res: Response) => {
     // API endpoint
     const url = 'https://api.open-meteo.com/v1/forecast';
 
-    try{
+    try {
         // Fetching data
         const responses = await fetchWeatherApi(url, params);
 
@@ -77,6 +81,12 @@ app.get('/weather', async (req: Request, res: Response) => {
         console.error('Error fetching weather data:', error);
         res.status(500).json({ error: 'Failed to fetch weather data' });
     }
+});
+
+// The "catchall" handler: for any request that doesn't match any route above,
+// send back React's index.html file.
+app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
 const port = process.env.PORT || 8000;
