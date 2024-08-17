@@ -9,4 +9,4 @@ start = "npm start"
 [services.client]
 path = "client"
 build = "npm install && npm run build"
-start = "serve -s build"
+start = "npm start"
