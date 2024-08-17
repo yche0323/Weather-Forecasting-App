@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import LineChart from "./WeatherSubcomponents/LineChart";
 import BarChart from "./WeatherSubcomponents/BarChart";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
 interface WeatherComponentProps {
   setCurrWeatherData: (
     currTemp: number,
@@ -79,7 +81,7 @@ const WeatherComponent: React.FC<WeatherComponentProps> = ({
     const fetchWeatherData = async () => {
       try {
         const response = await fetch(
-          `/weather?latitude=${latitude}&longitude=${longitude}&selectedDate=${selectedDate}`
+          `${API_URL}/weather?latitude=${latitude}&longitude=${longitude}&selectedDate=${selectedDate}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch weather data");
