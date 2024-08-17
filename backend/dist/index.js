@@ -82,7 +82,7 @@ app.get('/weather', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 app.get('*', (req, res) => {
     res.sendFile(path_1.default.join(__dirname, '../client/build', 'index.html'));
 });
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

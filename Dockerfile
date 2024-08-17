@@ -37,8 +37,8 @@ WORKDIR /backend
 # Copy backend files from the previous build stage
 COPY --from=backend-build /backend .
 
-# Expose port 8000
-EXPOSE 8000
+# Expose port 8080
+EXPOSE 8080
 
 # Start the backend server
 CMD ["npm", "start"]
