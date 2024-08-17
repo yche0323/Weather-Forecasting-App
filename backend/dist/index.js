@@ -83,6 +83,6 @@ app.get('*', (req, res) => {
     res.sendFile(path_1.default.join(__dirname, '../client/build', 'index.html'));
 });
 const port = process.env.PORT || 8080;
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
     console.log(`Server is running on port ${port}`);
 });

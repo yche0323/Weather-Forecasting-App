@@ -89,7 +89,7 @@ app.get('*', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
+const port = parseInt(process.env.PORT || "8080", 10);
+app.listen(port, "0.0.0.0", () => {
     console.log(`Server is running on port ${port}`);
 });
