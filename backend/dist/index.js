@@ -21,8 +21,6 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-// Serving the static files from the React app
-app.use(express_1.default.static(path_1.default.join(__dirname, '../client/build')));
 function formatTimeToAMPM(dateTime) {
     let hours = dateTime.getHours();
     const minutes = dateTime.getMinutes();
@@ -77,11 +75,6 @@ app.get('/weather', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).json({ error: 'Failed to fetch weather data' });
     }
 }));
-// The "catchall" handler: for any request that doesn't match any route above,
-// send back React's index.html file.
-app.get('*', (req, res) => {
-    res.sendFile(path_1.default.join(__dirname, '../client/build', 'index.html'));
-});
 const port = process.env.PORT || 8080;
 app.listen(port, "0.0.0.0", () => {
     console.log(`Server is running on port ${port}`);

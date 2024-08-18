@@ -11,9 +11,6 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 
-// Serving the static files from the React app
-app.use(express.static(path.join(__dirname, '../client/build')));
-
 function formatTimeToAMPM(dateTime: Date): string {
     let hours = dateTime.getHours();
     const minutes = dateTime.getMinutes();
@@ -81,12 +78,6 @@ app.get('/weather', async (req: Request, res: Response) => {
         console.error('Error fetching weather data:', error);
         res.status(500).json({ error: 'Failed to fetch weather data' });
     }
-});
-
-// The "catchall" handler: for any request that doesn't match any route above,
-// send back React's index.html file.
-app.get('*', (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
 const port = parseInt(process.env.PORT || "8080", 10);
