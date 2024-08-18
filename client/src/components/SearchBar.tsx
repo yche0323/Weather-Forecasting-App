@@ -25,14 +25,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
     if (input.length < 2) return;
 
     try {
-      console.log("Access token:", process.env.REACT_APP_MAPBOX_ACCESS_TOKEN);
       const response = await axios.get(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
           input
         )}.json`,
         {
           params: {
-            access_token: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
+            access_token:
+              "pk.eyJ1IjoiY2hlb2t5b25namllIiwiYSI6ImNseXN6NGlnOTA2dWUycXBzYTlqamY5Y3MifQ.HeCbxiw_u_6pKd56uyKIPw",
             limit: 5,
             types: "place",
           },
@@ -79,7 +79,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
         )}.json`,
         {
           params: {
-            access_token: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
+            access_token:
+              "pk.eyJ1IjoiY2hlb2t5b25namllIiwiYSI6ImNseXN6NGlnOTA2dWUycXBzYTlqamY5Y3MifQ.HeCbxiw_u_6pKd56uyKIPw",
             limit: 1,
           },
         }

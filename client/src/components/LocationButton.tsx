@@ -45,7 +45,8 @@ const LocationButton: React.FC<LocationButtonProps> = ({ onCitySelect }) => {
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json`,
         {
           params: {
-            access_token: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN,
+            access_token:
+              "pk.eyJ1IjoiY2hlb2t5b25namllIiwiYSI6ImNseXN6NGlnOTA2dWUycXBzYTlqamY5Y3MifQ.HeCbxiw_u_6pKd56uyKIPw",
             limit: 1,
           },
         }
