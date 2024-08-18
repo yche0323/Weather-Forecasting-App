@@ -25,7 +25,7 @@ FROM node:19 AS production
 RUN npm install -g serve
 
 # Copy the built frontend from the previous stage
-COPY --from=build /client/build /app
+COPY --from=build ../client/build /app
 
 # Expose the port that the frontend will listen on
 EXPOSE 5000
