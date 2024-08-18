@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build
 
 # Expose the port that the backend will listen on
-EXPOSE 8000
+EXPOSE 8080
 
 # Start the backend server
 CMD ["npm", "start"]
