@@ -18,6 +18,10 @@ interface SearchBarProps {
   onCitySelect: (lat: string, lng: string, loc: string) => void;
 }
 
+const mapbox_token =
+  process.env.REACT_APP_MAPBOX_ACCESS_TOKEN ||
+  "pk.eyJ1IjoiY2hlb2t5b25namllIiwiYSI6ImNseXN6NGlnOTA2dWUycXBzYTlqamY5Y3MifQ.HeCbxiw_u_6pKd56uyKIPw";
+
 const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
   const [options, setOptions] = useState<CityOption[]>([]);
 
@@ -31,8 +35,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
         )}.json`,
         {
           params: {
-            access_token:
-              "pk.eyJ1IjoiY2hlb2t5b25namllIiwiYSI6ImNseXN6NGlnOTA2dWUycXBzYTlqamY5Y3MifQ.HeCbxiw_u_6pKd56uyKIPw",
+            access_token: mapbox_token,
             limit: 5,
             types: "place",
           },
@@ -79,8 +82,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
         )}.json`,
         {
           params: {
-            access_token:
-              "pk.eyJ1IjoiY2hlb2t5b25namllIiwiYSI6ImNseXN6NGlnOTA2dWUycXBzYTlqamY5Y3MifQ.HeCbxiw_u_6pKd56uyKIPw",
+            access_token: mapbox_token,
             limit: 1,
           },
         }

@@ -40,13 +40,16 @@ const LocationButton: React.FC<LocationButtonProps> = ({ onCitySelect }) => {
     lat: number,
     lng: number
   ): Promise<string | null> => {
+    const mapbox_token =
+      process.env.REACT_APP_MAPBOX_ACCESS_TOKEN ||
+      "pk.eyJ1IjoiY2hlb2t5b25namllIiwiYSI6ImNseXN6NGlnOTA2dWUycXBzYTlqamY5Y3MifQ.HeCbxiw_u_6pKd56uyKIPw";
+
     try {
       const response = await axios.get(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json`,
         {
           params: {
-            access_token:
-              "pk.eyJ1IjoiY2hlb2t5b25namllIiwiYSI6ImNseXN6NGlnOTA2dWUycXBzYTlqamY5Y3MifQ.HeCbxiw_u_6pKd56uyKIPw",
+            access_token: mapbox_token,
             limit: 1,
           },
         }

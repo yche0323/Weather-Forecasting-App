@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import LineChart from "./WeatherSubcomponents/LineChart";
 import BarChart from "./WeatherSubcomponents/BarChart";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_URL =
+  process.env.REACT_APP_API_URL ||
+  "https://weather-forecasting-app-production.up.railway.app";
 
 interface WeatherComponentProps {
   setCurrWeatherData: (
