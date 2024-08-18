@@ -25,6 +25,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onCitySelect }) => {
     if (input.length < 2) return;
 
     try {
+      console.log("Access token:", process.env.REACT_APP_MAPBOX_ACCESS_TOKEN);
       const response = await axios.get(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
           input
