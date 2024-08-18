@@ -4,7 +4,7 @@ import BarChart from "./WeatherSubcomponents/BarChart";
 
 const API_URL =
   process.env.REACT_APP_API_URL ||
-  "weather-forecasting-app-production.up.railway.app";
+  "https://backend-production-1b42.up.railway.app/";
 
 interface WeatherComponentProps {
   setCurrWeatherData: (
